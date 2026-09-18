@@ -317,8 +317,13 @@ function openPicker(pid){
   };
   draw();
   wrap.hidden = false;
+  wrap.style.display = 'flex';
 }
-function closeSheet(){ document.getElementById('sheetWrap').hidden = true; }
+function closeSheet(){
+  const w = document.getElementById('sheetWrap');
+  w.hidden = true;
+  w.style.display = 'none';   // inline: survives a stale cached stylesheet
+}
 
 function addLine(pid, itemId){
   const r = round();
