@@ -1,0 +1,17 @@
+# This project has no build step and no dependencies — nothing generated to ignore.
+# These are only here to keep stray local files out of a public repo.
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Local backups exported from Setup → Export backup (may contain real names)
+lunchrun-backup-*.json
+
+# Vercel link metadata (local, machine-specific)
+.vercel/

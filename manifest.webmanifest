@@ -1,0 +1,14 @@
+{
+  "name": "Lunch Run",
+  "short_name": "Lunch Run",
+  "description": "Collect the office lunch order, settle the cash, keep the transport fee fair.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111417",
+  "theme_color": "#111417",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

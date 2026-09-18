@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111417">
+<title>Lunch Run</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1 id="title">Lunch Run</h1>
+    <p class="sub" id="subtitle">—</p>
+  </div>
+  <span class="badge" id="statusBadge">collecting</span>
+</header>
+
+<main id="view" aria-live="polite"></main>
+
+<nav class="tabs" role="tablist">
+  <button class="tab" data-tab="order"  role="tab">🧾<span>Order</span></button>
+  <button class="tab" data-tab="send"   role="tab">📤<span>Send</span></button>
+  <button class="tab" data-tab="arrive" role="tab">📦<span>Arrive</span></button>
+  <button class="tab" data-tab="money"  role="tab">💵<span>Money</span></button>
+  <button class="tab" data-tab="fair"   role="tab">🔁<span>Fair</span></button>
+  <button class="tab" data-tab="setup"  role="tab">⚙️<span>Setup</span></button>
+</nav>
+
+<div class="sheet-wrap" id="sheetWrap" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head">
+      <strong id="sheetTitle">Add item</strong>
+      <button class="icon-btn" data-close aria-label="Close">✕</button>
+    </div>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>
