@@ -15,3 +15,6 @@ lunchrun-backup-*.json
 
 # Vercel link metadata (local, machine-specific)
 .vercel/
+
+.vercel
+.env*
