@@ -1,5 +1,5 @@
 // Offline shell. Bump CACHE when you change any file below.
-const CACHE = 'lunchrun-v3';
+const CACHE = 'lunchrun-v4';
 const ASSETS = [
   './', './index.html', './styles.css', './app.js',
   './manifest.webmanifest', './icon.svg'

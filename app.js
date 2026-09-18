@@ -262,7 +262,8 @@ function viewSetup(){
   const items = S.items.sort((a,b)=>a.name.localeCompare(b.name)).map(i=>`<div class="row">
       <span class="name">${esc(i.name)}</span>
       <span class="right"><input type="number" inputmode="numeric" value="${i.price??''}" placeholder="price?"
-        data-itemprice="${i.id}" style="width:104px;min-height:38px;padding:7px 9px"></span></div>`).join('')
+        data-itemprice="${i.id}" style="width:104px;min-height:38px;padding:7px 9px">
+        <button class="icon-btn" data-rmitem="${i.id}" aria-label="Remove item">✕</button></span></div>`).join('')
     || '<div class="empty">The price book fills itself as you confirm prices on delivery.</div>';
 
   return `<div class="card"><h2>People in the office</h2>${people}
@@ -294,27 +295,36 @@ function openPicker(pid){
   document.getElementById('sheetTitle').textContent = `What does ${person(pid)?.name || ''} want?`;
   const body = document.getElementById('sheetBody');
 
-  const draw = (q='') => {
+  // The search box is built ONCE and never replaced. It used to be re-rendered on
+  // every keystroke, which reset the caret to position 0 — so "WALI NYAMA" was
+  // typed in as "AMAYN ILAW", each new letter landing in front of the last.
+  // Only the results list below it gets redrawn.
+  body.innerHTML = `
+    <input type="search" id="q" placeholder="Search or type a new item" autocomplete="off">
+    <div id="pickList" style="margin-top:8px"></div>`;
+  body.dataset.person = pid;
+
+  const qEl    = document.getElementById('q');
+  const listEl = document.getElementById('pickList');
+
+  const draw = () => {
+    const q = qEl.value;
     const needle = q.trim().toLowerCase();
     const list = S.items
       .filter(i => i.name.toLowerCase().includes(needle))
       .sort((a,b)=>(b.timesOrdered||0)-(a.timesOrdered||0) || a.name.localeCompare(b.name))
       .slice(0,40);
     const exact = S.items.some(i => i.name.toLowerCase() === needle);
-    body.innerHTML = `
-      <input type="search" id="q" placeholder="Search or type a new item" value="${esc(q)}" autocomplete="off">
-      <div style="margin-top:8px">
-        ${list.map(i=>`<button class="pick" data-pickitem="${i.id}">
-            <span>${esc(i.name)}</span>
-            <span class="muted">${i.price==null?'price?':money(i.price)}</span></button>`).join('')
-          || '<div class="empty">No matches.</div>'}
-        ${needle && !exact ? `<button class="pick" data-newitem="${esc(q.trim())}">
-            <span>➕ Add “${esc(q.trim())}”</span><span class="muted">new</span></button>` : ''}
-      </div>`;
-    const qEl = document.getElementById('q');
-    qEl.oninput = () => { const v = qEl.value; draw(v); document.getElementById('q').focus(); };
-    body.dataset.person = pid;
+    listEl.innerHTML = `
+      ${list.map(i=>`<button class="pick" data-pickitem="${i.id}">
+          <span>${esc(i.name)}</span>
+          <span class="muted">${i.price==null?'price?':money(i.price)}</span></button>`).join('')
+        || '<div class="empty">No matches.</div>'}
+      ${needle && !exact ? `<button class="pick" data-newitem="${esc(q.trim())}">
+          <span>➕ Add “${esc(q.trim())}”</span><span class="muted">new</span></button>` : ''}`;
   };
+
+  qEl.oninput = draw;
   draw();
   wrap.hidden = false;
   wrap.style.display = 'flex';
@@ -334,7 +344,7 @@ function addLine(pid, itemId){
 
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-tab],[data-go],[data-add],[data-del],[data-copy],[data-sent],[data-toggle],[data-delivered],[data-paid],[data-pick],[data-addperson],[data-rmperson],[data-savesettings],[data-export],[data-reset],[data-pickitem],[data-newitem],[data-close]');
+  const el = e.target.closest('[data-tab],[data-go],[data-add],[data-del],[data-copy],[data-sent],[data-toggle],[data-delivered],[data-paid],[data-pick],[data-addperson],[data-rmperson],[data-rmitem],[data-savesettings],[data-export],[data-reset],[data-pickitem],[data-newitem],[data-close]');
   if(!el) return;
   const d = el.dataset;
   const r = round();
@@ -394,6 +404,12 @@ document.addEventListener('click', e => {
     return;
   }
   if(d.rmperson){ S.people = S.people.filter(p=>p.id!==d.rmperson); save(); render(); return; }
+  if(d.rmitem){
+    // Only forget the name. Lines already ordered keep the price they were given,
+    // so deleting a typo cannot silently change what somebody owes.
+    S.items = S.items.filter(i=>i.id!==d.rmitem); save(); render(); toast('Item removed');
+    return;
+  }
 
   if('savesettings' in d){
     S.settings.transportFee = Number(document.getElementById('fee').value) || 0;
